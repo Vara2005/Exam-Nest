@@ -91,18 +91,23 @@ public class HomeController {
     }
     
     private void sendVerificationEmail(User user) {
+    try {
 
         String verifyURL = "https://exam-nest-production.up.railway.app/verify?token="
                 + user.getVerificationToken();
 
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("prajnasree78@gmail.com");   // your Brevo verified sender
+        message.setFrom("prajnasree78@gmail.com");
         message.setTo(user.getEmail());
         message.setSubject("Verify Your ExamNest Account");
         message.setText("Click below link to verify your account:\n" + verifyURL);
 
         mailSender.send(message);
+
+    } catch(Exception e){
+        System.out.println("MAIL ERROR: " + e.getMessage());
     }
+}
     
     private void createNotification(String message) {
         Notification notification = new Notification();
@@ -206,7 +211,7 @@ public class HomeController {
             session.setAttribute("loggedUser", admin);
             return "redirect:/admin";
         }
-        
+
         User user = userRepository.findByUsername(username);
 
         if (user == null) {
