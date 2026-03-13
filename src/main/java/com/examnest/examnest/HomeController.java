@@ -306,7 +306,7 @@ public class HomeController {
         user.setPassword(passwordEncoder.encode(password));
         user.setRole("ROLE_USER");
         user.setCreatedAt(LocalDateTime.now());
-        user.setEnabled(false);
+        user.setEnabled(true);
         user.setAccountLocked(false);   // add this
         user.setFailedAttempts(0);
 
