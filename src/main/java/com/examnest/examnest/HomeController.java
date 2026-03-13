@@ -92,7 +92,7 @@ public class HomeController {
     
     private void sendVerificationEmail(User user) {
 
-        String verifyURL = "http://localhost:8080/verify?token="
+        String verifyURL = "https://exam-nest-production.up.railway.app/verify?token="
                 + user.getVerificationToken();
 
         SimpleMailMessage message = new SimpleMailMessage();
@@ -223,7 +223,7 @@ public class HomeController {
             session.setAttribute("loggedUser", admin);
             return "redirect:/admin";
         }
-        
+
         if (passwordEncoder.matches(password, user.getPassword())) {
 
             user.setFailedAttempts(0);
