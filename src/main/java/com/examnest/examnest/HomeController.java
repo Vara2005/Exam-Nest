@@ -188,23 +188,6 @@ public class HomeController {
                         HttpSession session,
                         jakarta.servlet.http.HttpServletResponse response) {
 
-        User user = userRepository.findByUsername(username);
-
-        if (user == null) {
-            model.addAttribute("error", "Invalid Username or Password");
-            return "login";
-        }
-
-        if (user.isAccountLocked()) {
-            model.addAttribute("error", "Account locked. Contact admin.");
-            return "login";
-        }
-        
-        if (!user.isEnabled()) {
-            model.addAttribute("error", "Please verify your email first!");
-            return "login";
-        }
-        
         if(username.equals("admin") && password.equals("admin123")){
     User admin = userRepository.findByUsername("admin");
 
@@ -223,6 +206,24 @@ public class HomeController {
             session.setAttribute("loggedUser", admin);
             return "redirect:/admin";
         }
+        
+        User user = userRepository.findByUsername(username);
+
+        if (user == null) {
+            model.addAttribute("error", "Invalid Username or Password");
+            return "login";
+        }
+
+        if (user.isAccountLocked()) {
+            model.addAttribute("error", "Account locked. Contact admin.");
+            return "login";
+        }
+        
+        if (!user.isEnabled()) {
+            model.addAttribute("error", "Please verify your email first!");
+            return "login";
+        }
+        
 
         if (passwordEncoder.matches(password, user.getPassword())) {
 
@@ -301,6 +302,8 @@ public class HomeController {
         user.setRole("ROLE_USER");
         user.setCreatedAt(LocalDateTime.now());
         user.setEnabled(false);
+        user.setAccountLocked(false);   // add this
+        user.setFailedAttempts(0);
 
         String token = UUID.randomUUID().toString();
         user.setVerificationToken(token);
@@ -1136,7 +1139,7 @@ public class HomeController {
         user.setResetToken(token);
         userRepository.save(user);
 
-        String resetLink = "http://localhost:8080/reset-password?token=" + token;
+        String resetLink = "https://exam-nest-production.up.railway.app/reset-password?token=" + token;
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("prajnasree78@gmail.com");
